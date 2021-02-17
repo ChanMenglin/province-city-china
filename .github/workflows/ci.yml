@@ -1,16 +1,51 @@
 name: GitHub Actions Build and Deploy province-city-china
+# on:
+#   push:
+#     branches:
+#       - master
+# jobs:
+#   build-deploy:
+#     runs-on: ubuntu-18.04
+#     steps:
+#     - uses: actions/checkout@master
+#     - name: Deploy
+#       uses: peaceiris/actions-gh-pages@v2.5.0
+#       env:
+#         ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}
+#         PUBLISH_BRANCH: gh-pages
+#         PUBLISH_DIR: ./packages/core/dist
+
+
 on:
   push:
     branches:
       - master
+
+env:
+  AZURE_WEBAPP_NAME: province-city-china           # set this to your application's name
+  AZURE_WEBAPP_PACKAGE_PATH: '.'      # set this to the path to your web app project, defaults to the repository root
+  NODE_VERSION: '14.15.4'             # set this to the node version to use
+
 jobs:
-  build-deploy:
-    runs-on: ubuntu-18.04
+  build-and-deploy:
+    name: Build and Deploy
+    runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@master
-    - name: Deploy
-      uses: peaceiris/actions-gh-pages@v2.5.0
+    - name: Use Node.js ${{ env.NODE_VERSION }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ env.NODE_VERSION }}
+    - name: npm install, start
+      run: |
+        # Build and get data.
+        git init
+        npm install
+        npm run start --if-present
+    - name: 'Deploy to Github Page'
+      uses: crazy-max/ghaction-github-pages@v1
+      with:
+        target_branch: gh-pages
+        build_dir: ./packages/core/dist
       env:
-        ACTIONS_DEPLOY_KEY: ${{ secrets.ACTIONS_DEPLOY_KEY }}
-        PUBLISH_BRANCH: gh-pages
-        PUBLISH_DIR: ./packages/core/dist
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
