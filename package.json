@@ -22,6 +22,9 @@
   "author": "Kenny Wong <wowohoo@qq.com>",
   "license": "MIT",
   "dependencies": {
-    "fs-extra": "^9.0.1"
+    "cheerio": "^1.0.0-rc.5",
+    "fs-extra": "^9.0.1",
+    "superagent": "^6.1.0",
+    "superagent-charset": "^1.2.0"
   }
 }
